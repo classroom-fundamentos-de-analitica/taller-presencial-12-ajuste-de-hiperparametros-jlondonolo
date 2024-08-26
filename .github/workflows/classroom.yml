@@ -1,7 +1,6 @@
 name: Autograding Tests
 'on':
 - push
-- workflow_dispatch
 - repository_dispatch
 permissions:
   checks: write
@@ -14,16 +13,18 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: hello world test
-      id: hello-world-test
-      uses: education/autograding-python-grader@v1
+    - name: Test modified
+      id: test-modified
+      uses: classroom-resources/autograding-command-grader@v1
       with:
+        test-name: Test modified
+        setup-command: pip3 install -r requirements.txt
+        command: python3 test.py
         timeout: 10
         max-score: 1
-        setup-command: pip install -r requirements.txt
     - name: Autograding Reporter
-      uses: education/autograding-grading-reporter@v1
+      uses: classroom-resources/autograding-grading-reporter@v1
       env:
-        HELLO-WORLD-TEST_RESULTS: "${{steps.hello-world-test.outputs.result}}"
+        TEST-MODIFIED_RESULTS: "${{steps.test-modified.outputs.result}}"
       with:
-        runners: hello-world-test
+        runners: test-modified
